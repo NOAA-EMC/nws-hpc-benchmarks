@@ -1,0 +1,83 @@
+packages:
+  #
+  ### Compilers
+  #
+  c:
+    prefer: ['intel-oneapi-compilers-classic']
+  cxx:
+    prefer: ['intel-oneapi-compilers-classic']
+  fortran:
+    require: ['intel-oneapi-compilers-classic']
+  intel-oneapi-compilers-classic:
+    buildable: false
+    externals:
+    - spec: intel-oneapi-compilers-classic@2021.10.0
+      prefix: /opt/intel/oneapi/compiler/2023.2.1/linux
+      extra_attributes:
+        compilers:
+          c: /opt/intel/oneapi/compiler/2023.2.1/linux/bin/intel64/icc
+          cxx: /opt/intel/oneapi/compiler/2023.2.1/linux/bin/intel64/icpc
+          fortran: /opt/intel/oneapi/compiler/2023.2.1/linux/bin/intel64/ifort
+        flags:
+          cflags: '-gcc-name=/usr/bin/gcc -gxx-name=/usr/bin/g++'
+          cxxflags: '-gcc-name=/usr/bin/gcc -gxx-name=/usr/bin/g++'
+          fflags: '-gcc-name=/usr/bin/gcc -gxx-name=/usr/bin/g++'
+        environment:
+          prepend_path:
+            LD_LIBRARY_PATH: /opt/intel/oneapi/compiler/2023.2.1/linux/compiler/lib/intel64_lin/:/usr/lib/gcc/x86_64-linux-gnu/11/
+            LIBRARY_PATH: /usr/lib/gcc/x86_64-linux-gnu/11/
+            CPATH: /usr/lib/gcc/x86_64-linux-gnu/11/include/
+        extra_rpaths:
+        - /opt/intel/oneapi/compiler/2023.2.1/linux/compiler/lib/intel64_lin/
+        - /usr/lib/gcc/x86_64-linux-gnu/11/
+  gcc:
+    buildable: false
+    externals:
+    - spec: gcc@11.5.0 languages:='c,c++,fortran'
+      prefix: /usr
+      extra_attributes:
+        compilers:
+          c: /usr/bin/gcc
+          cxx: /usr/bin/g++
+          fortran: /usr/bin/gfortran
+  gcc-runtime:
+    require: '%gcc@11.5.0'
+  #
+  ### Provider settings & externals
+  #
+  mpi:
+    buildable: false
+    require: 'intel-oneapi-mpi'
+  intel-oneapi-mpi:
+    externals:
+    - spec: intel-oneapi-mpi@2021.18~external-libfabric+ilp64
+      prefix: /opt/intel/oneapi
+  #
+  ### Individual package settings
+  #
+  cdo:
+    require: ["@=2.0.5"]
+  eckit:
+    require:: ["@=1.28.8"]
+  ecmwf-atlas:
+    require:: ['@=0.38.1', +fckit, ~trans, ~fftw]
+  fckit:
+    require:: ['@=0.13.1', '+eckit']
+  findutils:
+    require: ['@=4.1']
+  gdal:
+    require: ['@3.8.5']
+  gettext:
+    require: ["%[virtuals=c,cxx] gcc"]
+#  glib:
+#    require: ['@:2.74.3']
+#  gperf:
+#    require: "%[virtuals=c,cxx] gcc"
+#  harfbuzz:
+#    require: "%[virtuals=c,cxx] gcc"
+  libiconv:
+    require: ["@=1.14"]
+  py-xarray:
+    require: ["@=2023.7.0"]
+  tar:
+    require: "%[virtuals=c] gcc"

@@ -1,0 +1,126 @@
+# spack-stack hash: 7145e585
+# spack hash: 0a2c2f21d5
+spack:
+  concretizer:
+    unify: when_possible
+    reuse: false
+
+  config:
+    deprecated: true
+
+    extensions:
+    - /lfs/work/alexander_richert/stack/spack-helpers
+  view: false
+
+  include:
+  - site/packages_oneapi-2026.1.0.yaml
+  - site
+
+  specs:
+  - bacio
+  - bufr
+  - crtm@=3.1.2
+  - esmf@8.9.1~shared
+  - fms@2025.03 precision=32,64 +quad_precision +openmp +yaml +gfs_phys constants=GFS
+  - fms@2024.03 precision=32,64 +quad_precision +openmp ~yaml +gfs_phys constants=GFS +deprecated_io
+  - g2
+  - g2tmpl
+  - gfsio
+  - gftl-shared
+  - yafyaml
+  - gsi-ncdiag
+  - hdf5 +hl +fortran +mpi +threadsafe ~szip
+  - ip
+  - jasper
+  - libjpeg-turbo
+  - libpng
+  - mapl@2.53.4~shared ^esmf@8.9.1~shared
+  - ncio
+  - nemsio
+  - netcdf-c ~dap +mpi ~parallel-netcdf ~szip build_system=cmake
+  - netcdf-fortran
+  - parallelio
+  - python
+  - sfcio
+  - sigio
+  - sp
+  - w3emc
+  - w3nco
+  - wrf-io
+  repos:
+    envrepo: $env/spack_repo/envrepo
+  packages:
+    gcc:
+      externals: []
+    upp:
+      require: fflags="-free"
+    cmake:
+      externals:
+      - spec: cmake@3.31.12 ~doc+ncurses+ownlibs~qtgui
+        prefix: /lfs/work/alexander_richert/stack/spack/opt/spack/cmake-3.31.12-mken3aqlztaiytatp5eswd5u2bnfyby5
+    git:
+      externals:
+      - spec: git@2.55.0 +man+nls+perl+subtree~tcltk
+        prefix: /lfs/work/alexander_richert/stack/spack/opt/spack/git-2.55.0-v3wgwx2aexsygsicmwek2gwqtflxsmks
+    git-lfs:
+      externals:
+      - spec: git-lfs@3.7.1
+        prefix: /lfs/work/alexander_richert/stack/spack/opt/spack/git-lfs-3.7.1-pukjelt72k3lv2kh37ve2lw5fqrrpaic
+    gmake:
+      externals:
+      - spec: gmake@4.4.1 ~guile
+        prefix: /lfs/work/alexander_richert/stack/spack/opt/spack/gmake-4.4.1-x2ab7llnp4ewsywr3weugch4vuys6kgx
+    libice:
+      externals:
+      - spec: libice@1.1.2
+        prefix: /lfs/work/alexander_richert/stack/spack/opt/spack/libice-1.1.2-cbqqet3w4sbljueclubgqslcud7gsaeo
+    libsm:
+      externals:
+      - spec: libsm@1.2.6
+        prefix: /lfs/work/alexander_richert/stack/spack/opt/spack/libsm-1.2.6-ynysq2zcfkzughjwgqytfvvwwpuhpbka
+    libx11:
+      externals:
+      - spec: libx11@1.8.13
+        prefix: /lfs/work/alexander_richert/stack/spack/opt/spack/libx11-1.8.13-rewidwwbb75z4rhgxfehczp2zlutmhpn
+    libxext:
+      externals:
+      - spec: libxext@1.3.7
+        prefix: /lfs/work/alexander_richert/stack/spack/opt/spack/libxext-1.3.7-rsazhooakivp4cqnpllctdaqcgawdmh4
+    libxi:
+      externals:
+      - spec: libxi@1.7.10
+        prefix: /lfs/work/alexander_richert/stack/spack/opt/spack/libxi-1.7.10-dhniliqdbdzb47ygyshvv247ayt6xft3
+    libxt:
+      externals:
+      - spec: libxt@1.3.1
+        prefix: /lfs/work/alexander_richert/stack/spack/opt/spack/libxt-1.3.1-m24gnavmynwqox5up3isjsy24iwtsh4o
+    libxtst:
+      externals:
+      - spec: libxtst@1.2.5
+        prefix: /lfs/work/alexander_richert/stack/spack/opt/spack/libxtst-1.2.5-7wwp7kmwdummfkt754sxdyetjywkcrjg
+    motif:
+      externals:
+      - spec: motif@2.3.8
+        prefix: /lfs/work/alexander_richert/stack/spack/opt/spack/motif-2.3.8-bhrmpjgcr2rejexqiu4llrs6sbe3fwfw
+    perl:
+      externals:
+      - spec: perl@5.42.2 +cpanm+opcode+open+shared+threads
+        prefix: /lfs/work/alexander_richert/stack/spack/opt/spack/perl-5.42.2-54d4rmvr5cadhrmsxbzncvx3tnd4sw6h
+    xproto:
+      externals:
+      - spec: xproto@7.0.31
+        prefix: /lfs/work/alexander_richert/stack/spack/opt/spack/xproto-7.0.31-dhrk6mcmupuoigz7nujckzebhcxmpc4p
+    crtm-fix:
+      externals:
+      - spec: crtm-fix@2.4.0.1_emc +big_endian~little_endian+netcdf
+        prefix: /lfs/work/alexander_richert/stack/spack/opt/spack/crtm-fix-2.4.0.1_emc-ed2joat2qislfkpz32dqml4bc2f32pr5
+      - spec: crtm-fix@3.1.2.0 +big_endian~little_endian+netcdf~testfiles
+        prefix: /lfs/work/alexander_richert/stack/spack/opt/spack/crtm-fix-3.1.2.0-vxrmhib7iqlkowthlvxcfjzkg76kvwwv
+    nco:
+      package_attributes:
+        config_args: [LIBS=-lnetcdf -lhdf5 -lhdf5_hl -lm -lz -lzstd -lbz2 -lxml2]
+  modules:
+    default:
+      lmod:
+        core_compilers:
+        - gcc@11.5.0/dkk24cbj62nesft4fo3ggr663aund24n

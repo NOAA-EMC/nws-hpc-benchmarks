@@ -1,0 +1,53 @@
+packages:
+  all:
+    target: ["x86_64"]
+  # Don't build compilers
+  c:
+    buildable: false
+  cxx:
+    buildable: false
+  fortran:
+    buildable: false
+  #
+  ### Providers
+  #
+  blas:
+    require:: ['openblas']
+  fftw-api:
+    require:: ['fftw']
+  jpeg:
+    require: ['libjpeg-turbo']
+  lapack:
+    require:: ['openblas']
+  mkl:
+    buildable: false
+  xkbdata-api:
+    require: ['xkbdata'] # eliminates a million dependencies
+  #
+  ### Individual package settings
+  #
+  # Use `require::` to override require's from common/packages.yaml,
+  # and `require:<newline>  - '...'` to add to existing ones.
+  bacio:
+    require:: ['@2.4.1']
+  boost:
+    require:: ['@:']
+  crtm:
+    require: ['+fix']
+  flex:
+    require: ['@2.6.4']
+  gettext:
+    require: ['~tar', '~curses', '~git', '~bzip2', '~xz']
+  libxslt:
+    require: ['~crypto']
+  netcdf-c:
+    require:: ['+mpi', '~parallel-netcdf', '~dap', '~blosc', '~szip', '~byterange']
+  pango:
+    require:: ["@=1.48.11"] # avoid some deps/restrictions (json-glib)
+  py-colorama:: {}
+  py-pandas:
+    require:: ['~excel']
+  subversion:
+    require: ['~serf', '+pic']
+  zlib-ng:
+    require: ['+compat', '~new_strategies']

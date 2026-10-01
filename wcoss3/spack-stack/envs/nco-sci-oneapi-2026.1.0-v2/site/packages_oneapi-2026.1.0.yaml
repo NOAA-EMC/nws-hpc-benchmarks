@@ -1,0 +1,56 @@
+packages:
+  # Use x86_64 for all packages
+  all:
+    require: ['target=x86_64']
+  #
+  ### Compilers
+  #
+  c:
+    prefer: ['intel-oneapi-compilers']
+  cxx:
+    prefer: ['intel-oneapi-compilers']
+  fortran:
+    require: ['intel-oneapi-compilers']
+  intel-oneapi-compilers:
+    buildable: false
+    externals:
+    - spec: intel-oneapi-compilers@2026.1.0
+      prefix: /opt/intel/oneapi
+      extra_attributes:
+        compilers:
+          c: /opt/intel/oneapi/compiler/2026.1/bin/icx
+          cxx: /opt/intel/oneapi/compiler/2026.1/bin/icpx
+          fortran: /opt/intel/oneapi/compiler/2026.1/bin/ifx
+  gcc:
+    buildable: false
+    externals:
+      - spec: gcc@11.5.0 languages:='c,c++,fortran'
+        prefix: /usr
+        extra_attributes:
+          compilers:
+            c: /usr/bin/gcc
+            cxx: /usr/bin/g++
+            fortran: /usr/bin/gfortran
+  gcc-runtime:
+    require: '%gcc@11.5.0'
+  #
+  ### Provider settings & externals
+  #
+  mpi:
+    buildable: false
+    require: 'intel-oneapi-mpi'
+  intel-oneapi-mpi:
+    externals:
+    - spec: intel-oneapi-mpi@2021.18~external-libfabric+ilp64
+      prefix: /opt/intel/oneapi/
+  blas:
+    require:: ['openblas']
+  lapack:
+    require:: ['openblas']
+  fftw-api:
+    require:: ['fftw']
+  #
+  ### Individual package settings
+  #
+  nco:
+   require:: ['@:'] # ignore common/packages_oneapi.yaml setting

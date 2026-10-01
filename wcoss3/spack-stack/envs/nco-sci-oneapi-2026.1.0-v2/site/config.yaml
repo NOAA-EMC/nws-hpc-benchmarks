@@ -1,0 +1,10 @@
+config:
+  build_jobs: 8
+  build_stage: $tempdir/$user/spack-stage
+  template_dirs:
+  - $env/site/templates
+  - $spack/share/spack/templates
+  installer: new
+  install_tree:
+    projections:
+      all: "{name}-{version}-{hash}"

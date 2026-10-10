@@ -10,11 +10,12 @@ packages:
   cxx:
     prefer: ['intel-oneapi-compilers']
   fortran:
+    prefer: ['intel-oneapi-compilers']
     require: ['intel-oneapi-compilers']
   intel-oneapi-compilers:
     buildable: false
     externals:
-    - spec: intel-oneapi-compilers@2026.1.0
+    - spec: intel-oneapi-compilers@2026.1.1
       prefix: /opt/intel/oneapi
       extra_attributes:
         compilers:

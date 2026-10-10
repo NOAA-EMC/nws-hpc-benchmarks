@@ -1,0 +1,87 @@
+# spack-stack hash: 7145e585
+# spack hash: 0a2c2f21d5
+spack:
+  concretizer:
+    unify: when_possible
+    reuse: false
+
+  config:
+    locks: false
+    deprecated: true
+
+  view: false
+
+  include:
+  - site/packages_oneapi-2026.1.1.yaml
+  - site
+
+  specs:
+  - bacio
+  - bufr
+  - crtm@=3.1.2
+  - esmf@8.9.1~shared
+  - fms@2025.03 precision=32,64 +quad_precision +openmp +yaml +gfs_phys constants=GFS
+  - fms@2024.03 precision=32,64 +quad_precision +openmp ~yaml +gfs_phys constants=GFS +deprecated_io
+  - g2
+  - g2tmpl
+  - gfsio
+  - gsi-ncdiag
+  - hdf5 +hl +fortran +mpi +threadsafe ~szip
+  - ip
+  - jasper
+  - libjpeg-turbo
+  - libpng
+  - ncio
+  - nemsio
+  - netcdf-c ~dap +mpi ~parallel-netcdf ~szip build_system=cmake
+  - netcdf-fortran
+  - parallelio +pnetcdf
+  - parallel-netcdf@1.12.3
+  - python
+  - scotch@7.0.4 +mpi ~shared +metis
+  - sfcio
+  - sigio
+  - sp
+  - w3emc
+  - w3nco
+  - wrf-io
+  repos:
+    envrepo: $env/spack_repo/envrepo
+  packages:
+    gcc:
+      externals: []
+    upp:
+      require: fflags="-free"
+    cmake:
+      externals: []
+      buildable: true
+      require: '@=3.31.12 ~doc+ncurses+ownlibs~qtgui'
+    git:
+      externals: []
+    gmake:
+      externals: []
+      buildable: true
+      require: '@=4.4.1 ~guile'
+    crtm-fix:
+      externals: []
+  modules:
+    default:
+      lmod:
+        core_compilers:
+        - gcc@11.5.0/dkk24cbj62nesft4fo3ggr663aund24n
+  bootstrap:
+    enable: true
+    root: $spack/bootstrap
+    sources:
+    - name: github-actions-v2
+      metadata: $spack/share/spack/bootstrap/github-actions-v2
+    - name: github-actions-v0.6
+      metadata: $spack/share/spack/bootstrap/github-actions-v0.6
+    - name: spack-install
+      metadata: $spack/share/spack/bootstrap/spack-install
+    trusted:
+    # By default we trust bootstrapping from sources and from binaries
+    # produced on Github via the workflow
+      github-actions-v2: true
+      github-actions-v0.6: true
+      spack-install: true

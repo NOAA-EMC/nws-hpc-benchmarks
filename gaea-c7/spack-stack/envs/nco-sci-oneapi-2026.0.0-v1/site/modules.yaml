@@ -1,0 +1,16 @@
+modules:
+  default:
+    enable::
+    - lmod
+    lmod:
+      hierarchy:
+      - mpi
+      - hdf5_virtual
+      - netcdf_c_virtual
+      - esmf_virtual
+      - python_virtual
+      all:
+        autoload: run
+      boost:
+        suffixes:
+          '%gcc': gcc

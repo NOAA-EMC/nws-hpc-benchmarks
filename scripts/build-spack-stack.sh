@@ -1,5 +1,19 @@
 #!/bin/bash
 
+# A sourced build must not exit or change options in the calling shell.
+if [[ $- == *i* && -z "${SLURM_JOB_ID:-}" ]]; then
+  set +e
+fi
+if [[ "${BASH_SOURCE[0]}" != "$0" ]]; then
+  if bash "${BASH_SOURCE[0]}" "$@"; then
+    return 0
+  else
+    return $?
+  fi
+fi
+
+set -e
+
 MACHINE_ID="wcoss3"
 
 case $(hostname -f) in
@@ -68,8 +82,11 @@ source setup.sh
 spack env activate envs/$ENVNAME
 spack concretize -f
 install_start=$SECONDS
-spack install
-install_status=$?
+if spack install; then
+  install_status=0
+else
+  install_status=$?
+fi
 install_elapsed=$((SECONDS - install_start))
 
 printf 'spack install took %d minutes and %d seconds\n' \
@@ -83,5 +100,4 @@ fi
 spack module lmod refresh --delete-tree -y
 #Setup meta modules
 spack stack setup-meta-modules
-
 

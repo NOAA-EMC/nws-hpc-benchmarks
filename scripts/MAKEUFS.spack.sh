@@ -1,13 +1,25 @@
 #!/bin/bash
 
+# A sourced build must not exit or change options in the calling shell.
+if [[ $- == *i* && -z "${SLURM_JOB_ID:-}" ]]; then
+  set +e
+fi
+if [[ "${BASH_SOURCE[0]}" != "$0" ]]; then
+  if bash "${BASH_SOURCE[0]}" "$@"; then
+    return 0
+  else
+    return $?
+  fi
+fi
+
 set -e
 
-export PW="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
+export PW="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../.." && pwd -P)"
 #
 # Build the ufs-weather-model against the libraries already built in the
 # spack-stack environment (no simple-ufs build).
 #
-source "$PW/envset.spack.sh"
+source "$(dirname -- "${BASH_SOURCE[0]}")/envset.spack.sh"
 
 cd "$PW"
 ## Extract the source only once; re-extracting clobbers local CMake fixes

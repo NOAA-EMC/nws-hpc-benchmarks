@@ -3,10 +3,15 @@
 # Lmod must already be initialized. No Spack activation or queries are needed.
 # Compiler selection comes from the compiler module; MPI wrappers are on PATH.
 #
-# Usage: source /path/to/b2026_gb/envset.spack
-# Defaults to the adjacent spack-stack-2.1.1 installation and its sole environment.
+# Usage: source /path/to/b2026_gb/nws-hpc-benchmarks/scripts/envset.spack.sh
+# Defaults to spack-stack-2.1.1 beside the repository and its sole environment.
 # Export SPACK_STACK_DIR and/or SPACK_ENV (an environment directory) to override.
 # Multiple matching modules/environments are errors, not arbitrary selections.
+
+# A failed source must not terminate an interactive shell outside Slurm.
+if [[ $- == *i* && -z "${SLURM_JOB_ID:-}" ]]; then
+    set +e
+fi
 
 _envset_spack() {
     local script_dir module_root module_files compiler_module compiler_version mpi_root
@@ -14,7 +19,7 @@ _envset_spack() {
     local -a prefixes environments=()
 
     script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P) || return 1
-    export SPACK_STACK_DIR="${SPACK_STACK_DIR:-${script_dir}/spack-stack-2.1.1}"
+    export SPACK_STACK_DIR="${SPACK_STACK_DIR:-${script_dir}/../../spack-stack-2.1.1}"
     if [[ ! -d "$SPACK_STACK_DIR" ]]; then
         echo "envset.spack: stack directory does not exist: $SPACK_STACK_DIR" >&2
         return 1
@@ -42,15 +47,22 @@ _envset_spack() {
     fi
 
     module_root="${SPACK_STACK_DIR}/spack/share/spack/lmod"
-    if [[ ! -d "$module_root/Core" ]]; then
-        echo "envset.spack: missing meta-modules; run spack stack setup-meta-modules for this stack." >&2
-        return 1
-    fi
     module_files=$(find "$module_root" -type f -name '*.lua') || return 1
-    _envset_spack_load "$module_root/Core/stack-intel-oneapi-compilers/*.lua" || return 1
-    compiler_module=$_envset_spack_module
-    compiler_version=${compiler_module##*/}
-    _envset_spack_load "$module_root/intel-oneapi-compilers/$compiler_version/stack-*/*.lua" || return 1
+    if [[ "$module_files" == *"/Core/intel-oneapi-compilers/"* ]]; then
+        # Generated modules have hashes that the unhashed meta-module prerequisites reject.
+        _envset_spack_load "$module_root/*/Core/intel-oneapi-compilers/*.lua" || return 1
+        _envset_spack_load "$module_root/*/Core/intel-oneapi-mpi/*.lua" || return 1
+        export SERIAL_CC="$CC" SERIAL_CXX="$CXX" SERIAL_F77="$F77" SERIAL_FC="$FC"
+        export I_MPI_CC="$CC" I_MPI_CXX="$CXX" I_MPI_F77="$F77" I_MPI_F90="$FC" I_MPI_FC="$FC"
+        export MPICC="${I_MPI_ROOT}/bin/mpiicx" MPICXX="${I_MPI_ROOT}/bin/mpiicpx"
+        export MPIF77="${I_MPI_ROOT}/bin/mpiifx" MPIF90="${I_MPI_ROOT}/bin/mpiifx"
+    else
+        # Site-provided compiler/MPI modules (for example on Gaea) use the meta-modules.
+        _envset_spack_load "$module_root/Core/stack-intel-oneapi-compilers/*.lua" || return 1
+        compiler_module=$_envset_spack_module
+        compiler_version=${compiler_module##*/}
+        _envset_spack_load "$module_root/intel-oneapi-compilers/$compiler_version/stack-*/*.lua" || return 1
+    fi
 
     # CMake reads FFLAGS on first configure; CMEPS/CDEPS omit MPI include paths.
     # Use the first root containing mpi.mod. MPI_ROOT/MPICH_DIR come from the spack-stack

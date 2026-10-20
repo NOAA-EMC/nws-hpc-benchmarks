@@ -1,5 +1,5 @@
 config:
-  build_jobs: 8
+  build_jobs: 16
   build_stage: $tempdir/$user/spack-stage
   template_dirs:
   - $env/site/templates

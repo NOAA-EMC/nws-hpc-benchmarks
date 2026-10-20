@@ -1,13 +1,41 @@
 #!/bin/bash
 
-ENVNAME="nco-sci-oneapi-2026.0.0-v1"
 MACHINE_ID="wcoss3"
 
 case $(hostname -f) in
   gaea7[1-6])          MACHINE_ID=gaea-c7 ;; ### gaea71-76
   gaea7[1-6].ncrc.gov) MACHINE_ID=gaea-c7 ;; ### gaea71-76
+  wcoss3*)             MACHINE_ID=wcoss3 ;; ### wcoss3 login nodes
   *)                   MACHINE_ID=unknown ;;
 esac
+
+#Choose the environment from nws-hpc-benchmarks/${MACHINE_ID}/spack-stack/envs
+ENVS_DIR="nws-hpc-benchmarks/${MACHINE_ID}/spack-stack/envs"
+if [[ ! -d "$ENVS_DIR" ]]; then
+  echo "Environment directory not found: $ENVS_DIR (MACHINE_ID=$MACHINE_ID)" >&2
+  exit 1
+fi
+envs=()
+for dir in "$ENVS_DIR"/*/; do
+  [[ -f "${dir}spack.yaml" ]] && envs+=("$(basename "$dir")")
+done
+if [[ ${#envs[@]} -eq 0 ]]; then
+  echo "No environments (with spack.yaml) found in $ENVS_DIR" >&2
+  exit 1
+fi
+echo "Available spack-stack environments for $MACHINE_ID:"
+for i in "${!envs[@]}"; do
+  printf '  %d) %s\n' "$((i + 1))" "${envs[i]}"
+done
+while true; do
+  read -r -p "Select environment [1-${#envs[@]}]: " choice || exit 1
+  if [[ "$choice" =~ ^[0-9]+$ ]] && (( choice >= 1 && choice <= ${#envs[@]} )); then
+    ENVNAME="${envs[choice - 1]}"
+    break
+  fi
+  echo "Invalid choice: '$choice'" >&2
+done
+echo "Using environment: $ENVNAME"
 
 git clone --recursive --branch spack-stack-2.1.1 https://github.com/JCSDA/spack-stack.git
 mv spack-stack spack-stack-2.1.1

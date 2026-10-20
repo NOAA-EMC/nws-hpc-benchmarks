@@ -53,12 +53,16 @@ _envset_spack() {
     _envset_spack_load "$module_root/intel-oneapi-compilers/$compiler_version/stack-*/*.lua" || return 1
 
     # CMake reads FFLAGS on first configure; CMEPS/CDEPS omit MPI include paths.
-    mpi_root=${MPI_ROOT:-${I_MPI_ROOT:-${MPICH_DIR:-}}}
+    # Use the first root containing mpi.mod. MPI_ROOT/MPICH_DIR come from the spack-stack
+    # MPI meta-module (cray-mpich prefix on gaea); for Intel MPI they are the top-level
+    # oneAPI prefix without mpi.mod, so fall back to I_MPI_ROOT from Intel's mpi module.
     mpi_found=0
-    for mpi_include in "$mpi_root/include" "$mpi_root/include/mpi"; do
-        if [[ -n "$mpi_root" && -f "$mpi_include/mpi.mod" ]]; then
-            mpi_found=1
-        fi
+    for mpi_root in "${MPI_ROOT:-}" "${MPICH_DIR:-}" "${I_MPI_ROOT:-}"; do
+        [[ -n "$mpi_root" ]] || continue
+        for mpi_include in "$mpi_root/include" "$mpi_root/include/mpi"; do
+            [[ -f "$mpi_include/mpi.mod" ]] && mpi_found=1
+        done
+        [[ "$mpi_found" -eq 1 ]] && break
     done
     if [[ "$mpi_found" -ne 1 ]]; then
         echo "envset.spack: the MPI meta-module did not provide a valid Fortran module directory." >&2
